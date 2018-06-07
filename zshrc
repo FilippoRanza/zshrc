@@ -180,5 +180,22 @@ export LESS_TERMCAP_ue=$'\e[0m'
 export LESS_TERMCAP_us=$'\e[1;4;36m'
 
 
+#automatically show man page for current command
+#when on specified key event 
+function _show_current_command_man(){
+    if [[ "$BUFFER" ]] ; then
+        man $(echo "$BUFFER" | perl -ne 'if($. == 1){
+            /^\s*(\w+).*$/;
+            print "$1";
+        }' )
+    fi
+}
+zle -N _show_current_command_man
+#action is ctrl + Z
+bindkey '^Z' _show_current_command_man
+
+
+
+
 
 
