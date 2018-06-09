@@ -181,7 +181,7 @@ export LESS_TERMCAP_us=$'\e[1;4;36m'
 
 
 #automatically show man page for current command
-#when on specified key event 
+#on specified key event 
 
 function _exist_man_page(){
     man -f "$1" &> /dev/null
