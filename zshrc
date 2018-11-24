@@ -59,11 +59,11 @@ unsetopt autocd
 
 #test connection
 nt(){
-	if [[ $1 ]]; then 
+	if [[ $1 ]]; then
 		echo "ping 20 ECHO_REQUEST to ${1} 30s timout"
 		ping -c 20 -w 30 -q  $1
 	else
-		echo "ping 20 ECHO_REQUEST to google.com 30s timeout " 
+		echo "ping 20 ECHO_REQUEST to google.com 30s timeout "
 		ping -c 20 -w 30 -q  google.com
 	fi
 	return 0
@@ -78,21 +78,28 @@ setopt PROMPT_SUBST
 function print_error(){
     local ERR=$?
     if [[ $ERR -ne 0 ]]; then
-        local msg="%{$fg_bold[white]%}%{$bg_bold[red]%}-$ERR-%{$reset_color%}" 
+        local msg="%{$fg_bold[white]%}%{$bg_bold[red]%}-$ERR-%{$reset_color%}"
         echo "$msg"
     fi
 }
 
 
-if [[ $U_ID -eq  $R_ID ]] ; then 
-
-    PROMPT="%{$fg_bold[magenta]%}[%~]%{$fg_bold[yellow]%}#%{$reset_color%} "
-
+# change last string so the user knows if it is root or not
+if [[ $U_ID -eq  $R_ID ]] ; then
+	_prompt_='#'
 else
-    PROMPT='%{$fg_bold[magenta]%}[%~]%{$fg_bold[yellow]%}->%{$reset_color%} '
-    RPROMPT='$(print_error)'
+	_prompt_='->'
 fi
 
+# change prompt if the user is logged into a remote shell
+if [[ "$SSH_CLIENT" ]] ; then
+	_host_="$(hostname) "
+else
+	_host_=''
+fi
+
+PROMPT="%{$fg_bold[magenta]%}[$_host_%~]%{$fg_bold[yellow]%}$_prompt_%{$reset_color%} "
+RPROMPT='$(print_error)'
 
 off(){
       echo "shutdown  now!!!"
@@ -181,7 +188,7 @@ export LESS_TERMCAP_us=$'\e[1;4;36m'
 
 
 #automatically show man page for current command
-#on specified key event 
+#on specified key event
 
 function _exist_man_page(){
     man -f "$1" &> /dev/null
@@ -199,18 +206,12 @@ function _show_current_command_man(){
                 elif  _exist_man_page "$tmp[1]" ; then
                     man "$tmp[1]"
                 fi
-            else  
+            else
                 _exist_man_page "$tmp[1]"  && man "$tmp[1]"
             fi
-        fi 
+        fi
     fi
 }
 zle -N _show_current_command_man
 #action is ctrl + Z
 bindkey '^Z' _show_current_command_man
-
-
-
-
-
-
