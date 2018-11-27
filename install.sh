@@ -24,7 +24,7 @@
 
 # get file onwer and group
 get_owner(){
-    set -c '%U:%G' $1
+    stat -c '%U:%G' $1
 }
 
 install(){
