@@ -215,3 +215,48 @@ function _show_current_command_man(){
 zle -N _show_current_command_man
 #action is ctrl + Z
 bindkey '^Z' _show_current_command_man
+
+
+function _restart_iface(){
+    sudo ip link set dev "$1" down
+    sudo ip link set dev "$1" up
+    sudo -k
+}
+
+function reset_wifi(){
+    case "$1" in
+        'help')
+            echo 'reset_wifi - easly reset WiFi connections'
+            echo 'SYNOPSIS'
+            echo 'reset_wifi [full | iface_name] [help]'
+            echo 'help - show this help and exit'
+            echo 'full - not implemented'
+            echo 'iface_name - this must be an interface name'
+            echo 'this interface will be restarted'
+            echo 'without arguments this function tries to guess'
+            echo 'the default wlan interface and restar it'
+            ;;
+        'full')
+            echo 'Full WiFi reset'
+            ;;
+        '')
+            # restart the default interface, supposing that 
+            # there is only one wireless interface. 
+            DEFAULT_IFACE=$(iw dev | grep 'Interface' | cut -f 2 -d ' ')
+            _restart_iface "$DEFAULT_IFACE"
+            ;;
+        *)
+            # restart given interface
+            _restart_iface "$1"
+            ;;
+
+    esac
+}
+
+
+
+
+
+
+
+
