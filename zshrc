@@ -216,6 +216,7 @@ zle -N _show_current_command_man
 #action is ctrl + Z
 bindkey '^Z' _show_current_command_man
 
+_SATISFIED_DEPENCENCY_=''
 
 function _restart_iface(){
     sudo ip link set dev "$1" down
@@ -224,6 +225,8 @@ function _restart_iface(){
 }
 
 function reset_wifi(){
+    [[ -z "$_SATISFIED_DEPENCENCY_" ]] || { echo 'dependencies not satisfied' ; return}
+    
     case "$1" in
         'help')
             echo 'reset_wifi - easly reset WiFi connections'
@@ -256,18 +259,25 @@ function reset_wifi(){
 
 
 function reset_bluetooth(){
+    [[ -z "$_SATISFIED_DEPENCENCY_" ]] || { echo 'dependencies not satisfied' ; return}
+    
     sudo systemctl restart bluetooth.service
     sudo -k
 }
 
+_ENABLE_SAY_=''
+function _say_(){
+    [[ -z "$_ENABLE_SAY_" ]] || echo "$@"
+}
 
 function _exist_program(){
     which "$1" &> /dev/null
     OUT="$?"
     if [[ "$OUT" == '0' ]]; then
-        echo "$1... OK"
+        _say_ "$1... OK"
     else
-        echo "$1... NOT Installed"
+        _say_ "$1... NOT Installed"
+        _SATISFIED_DEPENCENCY_='FALSE'
         
     fi
     return "$OUT"
@@ -278,9 +288,10 @@ function _exist_service(){
     systemctl list-units | grep "$1" &> /dev/null
     OUT="$?"
     if [[ "$OUT" == '0' ]] ; then
-        echo "$1... available"
+        _say_ "$1... available"
     else
-        echo "$1... NOT available"
+        _say_ "$1... NOT available"
+        _SATISFIED_DEPENCENCY_='FALSE'
     fi
     return "$OUT"
 }
@@ -289,14 +300,14 @@ function _exist_service(){
 # by reset_* functions is available
 function reset_check(){
     
-    echo 'Checking for needed programs by reset_* functions'
+    _say_ 'Checking for needed programs by reset_* functions'
     for prg in 'iw' 'ip' 'sudo'; do
         _exist_program "$prg"
     done
 
     
     if _exist_program 'systemctl' ; then
-        echo 'Check for needed systemctl services by reset_* functions'
+        _say_ 'Check for needed systemctl services by reset_* functions'
         for srv in 'bluetooth.service'; do
             _exist_service "$srv"
         done
@@ -304,3 +315,7 @@ function reset_check(){
         
 }
 
+# check dependencies on startup
+reset_check
+# enable say
+_ENABLE_SAY_='true'
