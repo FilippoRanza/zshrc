@@ -319,3 +319,39 @@ function reset_check(){
 reset_check
 # enable say
 _ENABLE_SAY_='true'
+
+
+function check_reboot_need(){
+
+    CURR_VERSION=$(uname -r)
+    INSTALL_VERSION=$(file /boot/vmlinuz-linux-zen |
+     perl  -alne '/.+\s+version\s+([^\s]+)/; print $1')
+
+    if [[ "$CURR_VERSION"  !=  "$INSTALL_VERSION" ]] ; then
+        echo 'A System REBOOT is required, reboot now? [y/N/date]'
+        read ans
+        case "$ans" in
+            'y'|'Y')
+                reboot
+                ;;
+            'n'|'N'|'')
+                ;;
+            *)
+                shutdown -r "$ans"
+                ;;
+        esac
+    fi
+}
+
+
+if which yaourt &> /dev/null; then
+
+    function _yaourt_wrapper_(){
+        yaourt "$@"
+        check_reboot_need
+    }
+
+    alias yaourt='_yaourt_wrapper_'
+fi 
+
+
