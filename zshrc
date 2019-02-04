@@ -237,7 +237,7 @@ function reset_wifi(){
             echo 'the default wlan interface and restar it'
             ;;
         'full')
-            echo 'Full WiFi reset'
+            echo 'Not implemented'
             ;;
         '')
             # restart the default interface, supposing that 
