@@ -255,7 +255,10 @@ function reset_wifi(){
 
 
 
-
+function reset_bluetooth(){
+    sudo systemctl restart bluetooth.service
+    sudo -k
+}
 
 
 
