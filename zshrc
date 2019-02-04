@@ -262,35 +262,45 @@ function reset_bluetooth(){
 
 
 function _exist_program(){
-    if which "$1" &> /dev/null; then
+    which "$1" &> /dev/null
+    OUT="$?"
+    if [[ "$OUT" == '0' ]]; then
         echo "$1... OK"
     else
         echo "$1... NOT Installed"
         
     fi
+    return "$OUT"
 }
 
 
 function _exist_service(){
     systemctl list-units | grep "$1" &> /dev/null
-    if [[ "$?" == '0' ]] ; then
+    OUT="$?"
+    if [[ "$OUT" == '0' ]] ; then
         echo "$1... available"
     else
         echo "$1... NOT available"
     fi
+    return "$OUT"
 }
 
 # check that every program needed 
 # by reset_* functions is available
 function reset_check(){
-
-    for prg in 'systemctl' 'iw' 'ip' 'sudo'; do
+    
+    echo 'Checking for needed programs by reset_* functions'
+    for prg in 'iw' 'ip' 'sudo'; do
         _exist_program "$prg"
     done
 
-    for srv in 'bluetooth.service'; do
-        _exist_service "$srv"
-    done
+    
+    if _exist_program 'systemctl' ; then
+        echo 'Check for needed systemctl services by reset_* functions'
+        for srv in 'bluetooth.service'; do
+            _exist_service "$srv"
+        done
+    fi
         
 }
 
