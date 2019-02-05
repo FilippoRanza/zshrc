@@ -321,13 +321,28 @@ reset_check
 _ENABLE_SAY_='true'
 
 
+function _check_kernel_release_(){
+    # find the last kernel between the 
+    # installed ones, return success if
+    # the last installed version is the
+    # one in use, return fail otherwise
+    
+    CURR_VERSION=''    
+    for k in /boot/vmlinuz* ;  do
+        K_VER=$(file "$k" | perl  -lne '/.+\s+version\s+([^\s]+)/; print $1')
+        if [[ "$CURR_VERSION"  < "$K_VER" ]] ; then
+            CURR_VERSION="$K_VER"
+        fi
+    done
+    
+    [[ "$CURR_VERSION"  ==  $(uname -r) ]]
+}
+
+
 function check_reboot_need(){
 
-    CURR_VERSION=$(uname -r)
-    INSTALL_VERSION=$(file /boot/vmlinuz-linux-zen |
-     perl  -alne '/.+\s+version\s+([^\s]+)/; print $1')
 
-    if [[ "$CURR_VERSION"  !=  "$INSTALL_VERSION" ]] ; then
+    if _check_kernel_release_ ; then
         echo 'A System REBOOT is required, reboot now? [y/N/date]'
         read ans
         case "$ans" in
