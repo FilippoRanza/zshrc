@@ -343,15 +343,24 @@ function check_reboot_need(){
     fi
 }
 
+for i in 'apt' 'yaourt' ; do
 
-if which yaourt &> /dev/null; then
+    if which "$i" &> /dev/null ; then
+    
+        _PACKAGE_MANAGER_PROGRAM_="$i"
+        function _package_manager_wrapper_(){
+            "$_PACKAGE_MANAGER_PROGRAM_" "$@"
+            check_reboot_need
+        }
+        
+        alias "$_PACKAGE_MANAGER_PROGRAM_"='_package_manager_wrapper_'
+        
+        break
+    fi
 
-    function _yaourt_wrapper_(){
-        yaourt "$@"
-        check_reboot_need
-    }
+done
 
-    alias yaourt='_yaourt_wrapper_'
-fi 
+
+
 
 
