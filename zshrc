@@ -338,6 +338,29 @@ function _check_kernel_release_(){
     [[ "$CURR_VERSION"  !=  $(uname -r) ]]
 }
 
+function _clear_user_cache_(){
+
+    if [[ "$SUDO_USER" ]] ; then
+        HOME_DIR=$(getent passwd "$SUDO_USER" | cut -f6 -d:)
+    else
+        HOME_DIR="$HOME"
+    fi
+        
+    CACHE="$HOME_DIR/.cache"
+    if [[ -e "$CACHE"  ]]; then
+        echo "Clear user cache($CACHE)? [Y/n]"
+        read ans
+        case "$ans" in 
+             'n'|'N')
+             ;;
+             *)
+             rm -rf "$CACHE"
+             ;;
+        esac
+    fi
+    
+}
+
 
 function check_reboot_need(){
 
@@ -347,11 +370,13 @@ function check_reboot_need(){
         read ans
         case "$ans" in
             'y'|'Y')
+                _clear_user_cache_
                 reboot
                 ;;
             'n'|'N'|'')
                 ;;
             *)
+                _clear_user_cache_
                 shutdown -r "$ans"
                 ;;
         esac
