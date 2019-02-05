@@ -358,23 +358,34 @@ function check_reboot_need(){
     fi
 }
 
-for i in 'apt' 'yaourt' ; do
+# create the package manager wrapper only
+# is this script is sourced by an interactive 
+# shell
+if [[ "$-"  == *i* ]] ; then
+    for i in 'apt' 'yaourt' ; do
 
-    if which "$i" &> /dev/null ; then
-    
-        _PACKAGE_MANAGER_PROGRAM_="$i"
-        function _package_manager_wrapper_(){
-            "$_PACKAGE_MANAGER_PROGRAM_" "$@"
-            check_reboot_need
-        }
+        if which "$i" &> /dev/null ; then
         
-        alias "$_PACKAGE_MANAGER_PROGRAM_"='_package_manager_wrapper_'
-        
-        break
-    fi
+            # define a package manager wrapper
+            # that runs the package manager and
+            # then checks if a reboot is needed
+            # if so it allows the user to reboot
+            # immediately, to schedule the 
+            # reboot in the future or never reboot
+            # automatically
+            _PACKAGE_MANAGER_PROGRAM_="$i"
+            function _package_manager_wrapper_(){
+                "$_PACKAGE_MANAGER_PROGRAM_" "$@"
+                check_reboot_need
+            }
+            
+            alias "$_PACKAGE_MANAGER_PROGRAM_"='_package_manager_wrapper_'
+            
+            break
+        fi
 
-done
-
+    done
+fi
 
 
 
