@@ -335,7 +335,7 @@ function _check_kernel_release_(){
         fi
     done
     
-    [[ "$CURR_VERSION"  ==  $(uname -r) ]]
+    [[ "$CURR_VERSION"  !=  $(uname -r) ]]
 }
 
 
