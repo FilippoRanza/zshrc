@@ -323,9 +323,9 @@ _ENABLE_SAY_='true'
 
 function _check_kernel_release_(){
     # find the last kernel between the 
-    # installed ones, return success if
+    # installed ones, return fail if
     # the last installed version is the
-    # one in use, return fail otherwise
+    # one in use, return success otherwise
     
     CURR_VERSION=''    
     for k in /boot/vmlinuz* ;  do
