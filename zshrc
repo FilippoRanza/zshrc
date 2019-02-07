@@ -404,12 +404,44 @@ if [[ "$-"  == *i* ]] ; then
                 check_reboot_need
             }
             
+            case "$i" in 
+                'apt*')
+                    _PACKAGE_MANAGER_SEARCH_COMMAND_='search'
+                    _PACKAGE_MANAGER_INSTALL_COMMAND_='install'
+                    ;;
+                'yaourt')
+                    _PACKAGE_MANAGER_SEARCH_COMMAND_='-Ss'
+                    _PACKAGE_MANAGER_INSTALL_COMMAND_='-S'
+                    ;;
+            esac
+    
             alias "$_PACKAGE_MANAGER_PROGRAM_"='_package_manager_wrapper_'
             
             break
         fi
 
     done
+
+    function _auto_install_(){
+        TMP=("${=1}")
+        CMD="$TMP[1]"
+        
+        which "$CMD" &> /dev/null
+        if [[ "$?" != '0' ]] ; then
+            if  "$_PACKAGE_MANAGER_PROGRAM_" "$_PACKAGE_MANAGER_SEARCH_COMMAND_" "$CMD" &> /dev/null ; then
+                echo "$CMD is not installed, do you want to install it now? [y/N]"
+                read ans
+                case "$ans" in
+                    'y'|'Y') 
+                        "$_PACKAGE_MANAGER_PROGRAM_" "$_PACKAGE_MANAGER_INSTALL_COMMAND_" "$CMD"
+                    ;;
+                esac
+            fi
+        fi
+    }
+
+    add-zsh-hook preexec _auto_install_
+
 fi
 
 
