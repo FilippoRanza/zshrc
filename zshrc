@@ -366,6 +366,8 @@ function check_reboot_need(){
 
 
     if _check_kernel_release_ ; then
+        # just to be sure...
+        sync
         echo 'A System REBOOT is required, reboot now? [y/N/date]'
         read ans
         case "$ans" in
