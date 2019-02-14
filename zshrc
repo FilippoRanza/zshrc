@@ -1,7 +1,7 @@
 #
 #   zshrc - personal implementation of zsh's run configuration file
 #
-#   Copyright (c) 2018 Filippo Ranza <filipporanza@gmail.com>
+#   Copyright (c) 2018-2019 Filippo Ranza <filipporanza@gmail.com>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
