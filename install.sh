@@ -3,7 +3,7 @@
 #
 #   zshrc - personal implementation of zsh's run configuration file
 #
-#   Copyright (c) 2018 Filippo Ranza <filipporanza@gmail.com>
+#   Copyright (c) 2018-2019 Filippo Ranza <filipporanza@gmail.com>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -19,7 +19,8 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
+REPO_PATH="$(pwd)/zshrc"
+REPO_VERS=$(sha512sum "$REPO_PATH" | awk '{print $1}')
 
 
 # get file onwer and group
@@ -27,11 +28,23 @@ get_owner(){
     stat -c '%U:%G' $1
 }
 
-install(){
-    if [[ $2 ]] ; then
-        ln -s "$(pwd)/zshrc" "$1/.zshrc"
+check_install(){
+    USER_VERS=$(sha512sum "$1/.zshrc" | awk '{print $1}')
+    if [[ "$REPO_VERS" == "$USER_VERS" ]]; then
+        OUT=0
+        echo "$(stat -c '%U' $1) already has installed the last version"
     else
-        cp "$(pwd)/zshrc" "$1/.zshrc"
+        OUT=1
+    fi
+    return "$OUT"
+}
+
+install(){
+    check_install "$1" && return
+    if [[ $2 ]] ; then
+        ln -s "$REPO_PATH" "$1/.zshrc"
+    else
+        cp "$REPO_PATH" "$1/.zshrc"
     fi
     # reset .zshrc owner.
     chown "$(get_owner $1)" "$1/.zshrc"

@@ -364,7 +364,6 @@ function _clear_user_cache_(){
 
 function check_reboot_need(){
 
-
     if _check_kernel_release_ ; then
         # just to be sure...
         sync
