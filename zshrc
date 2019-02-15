@@ -256,7 +256,16 @@ function reset_wifi(){
     esac
 }
 
+function _sha512_(){
+    sha512sum "$1" |
+    awk '{print $1}'   
+} 
 
+function same_file(){
+    [[ "$1" -ef "$2" ]] && return 0
+    [[ $(stat -c '%s' "$1") == $(stat -c '%s' "$2") ]] || return 1
+    [[ $(_sha512_ "$1") ==  $(_sha512_ "$2") ]]
+}
 
 function reset_bluetooth(){
     [[ -z "$_SATISFIED_DEPENCENCY_" ]] || { echo 'dependencies not satisfied' ; return}
