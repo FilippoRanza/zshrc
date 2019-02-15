@@ -262,6 +262,25 @@ function _sha512_(){
 } 
 
 function same_file(){
+    
+    if [[ -z "$1" ]]; then
+        echo "$0 expected 2 parameters, got 0"
+        return 2
+    elif [[ -z "$2" ]] ; then
+        echo "$0 expected 2 parameters, got 1"
+        return 2
+    fi
+
+    if [[ ! ( -f "$1" ) ]]; then
+        echo "$0: $1: not a regular file"
+        return 3
+    fi
+
+    if [[ ! ( -f "$2" ) ]]; then
+        echo "$0: $2: not a regular file"
+        return 3
+    fi
+
     [[ "$1" -ef "$2" ]] && return 0
     [[ $(stat -c '%s' "$1") == $(stat -c '%s' "$2") ]] || return 1
     [[ $(_sha512_ "$1") ==  $(_sha512_ "$2") ]]
