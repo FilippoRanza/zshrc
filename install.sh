@@ -21,7 +21,7 @@
 
 REPO_PATH="$(pwd)/zshrc"
 REPO_VERS=$(sha512sum "$REPO_PATH" | awk '{print $1}')
-
+REPO_SIZE=$(stat -c '%s' "$REPO_PATH") 
 
 # get file onwer and group
 get_owner(){
@@ -29,6 +29,10 @@ get_owner(){
 }
 
 check_install(){
+    
+    #if the files have different size they can't be equal
+    [[ "$REPO_SIZE" ==  $(stat -c '%s' "$1/.zshrc") ]] || return '1'
+
     USER_VERS=$(sha512sum "$1/.zshrc" | awk '{print $1}')
     if [[ "$REPO_VERS" == "$USER_VERS" ]]; then
         OUT=0
