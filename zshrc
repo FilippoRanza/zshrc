@@ -280,6 +280,22 @@ function auto_type(){
 
 }
 
+function fast_push(){
+    if git status -s &> /dev/null; then
+        if [[ $(git remote show) ]] ; then
+            msg=${1:-"commit $(date)"}
+            git commit -a -m "$msg"
+            git push
+        else
+            echo 'no remote available'
+        fi
+    else
+        echo 'this is not a git repository'
+    fi
+}
+
+
+
 function same_file(){
     
     if [[ -z "$1" ]]; then
