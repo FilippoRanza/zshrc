@@ -261,6 +261,21 @@ function _sha512_(){
     awk '{print $1}'   
 } 
 
+function auto_type(){
+  MSG=${1:-''}
+  TIMES=${2:-'10'}
+  DELAY=${3:-'10'}
+  
+  [[ -z "$MSG" ]] && return 1
+
+  sleep "$DELAY"
+  for i in {1.."$TIMES"}; do
+    xdotool type "$MSG"
+    xdotool key KP_Enter
+  done
+    
+}
+
 function same_file(){
     
     if [[ -z "$1" ]]; then
