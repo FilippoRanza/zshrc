@@ -295,7 +295,6 @@ function auto_ignore(){
         git status -s | 
         grep '??'|
         awk '{print $2}' >>  '.gitignore'
-
         
         git commit -a -m 'automatically added untracked files to .gitignore'
 
