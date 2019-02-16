@@ -265,6 +265,7 @@ function auto_type(){
   MSG=${1:-''}
   TIMES=${2:-'10'}
   DELAY=${3:-'10'}
+  TYPE_DELAY=${4:-''}
   
   [[ -z "$MSG" ]] && return 1
 
@@ -272,8 +273,11 @@ function auto_type(){
   for i in {1.."$TIMES"}; do
     xdotool type "$MSG"
     xdotool key KP_Enter
+    [[ "$TYPE_DELAY" ]] && sleep "$TYPE_DELAY"
   done
-    
+
+  notify-send "$0" "$TIMES x $MSG : done" -t 2500
+
 }
 
 function same_file(){
