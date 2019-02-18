@@ -218,43 +218,7 @@ bindkey '^Z' _show_current_command_man
 
 _SATISFIED_DEPENCENCY_=''
 
-function _restart_iface(){
-    sudo ip link set dev "$1" down
-    sudo ip link set dev "$1" up
-    sudo -k
-}
 
-function reset_wifi(){
-    [[ -z "$_SATISFIED_DEPENCENCY_" ]] || { echo 'dependencies not satisfied' ; return}
-    
-    case "$1" in
-        'help')
-            echo 'reset_wifi - easly reset WiFi connections'
-            echo 'SYNOPSIS'
-            echo 'reset_wifi [full | iface_name] [help]'
-            echo 'help - show this help and exit'
-            echo 'full - not implemented'
-            echo 'iface_name - this must be an interface name'
-            echo 'this interface will be restarted'
-            echo 'without arguments this function tries to guess'
-            echo 'the default wlan interface and restar it'
-            ;;
-        'full')
-            echo 'Not implemented'
-            ;;
-        '')
-            # restart the default interface, supposing that 
-            # there is only one wireless interface. 
-            DEFAULT_IFACE=$(iw dev | grep 'Interface' | cut -f 2 -d ' ')
-            _restart_iface "$DEFAULT_IFACE"
-            ;;
-        *)
-            # restart given interface
-            _restart_iface "$1"
-            ;;
-
-    esac
-}
 
 function _sha512_(){
     sha512sum "$1" |
@@ -282,41 +246,6 @@ function auto_type(){
 function _compact_date_(){
     date '+%Y-%m-%d %H:%M'    
 }
-
-function auto_ignore(){
-    if git status -s &> /dev/null; then
-        [[ "$1" == 'local' ]] || cd $(git rev-parse --show-toplevel)
-
-        if [[ ! (-f '.gitignore') ]] ; then
-            echo "# .gitignore automatically created on $(_compact_date_)" > '.gitignore' 
-            git add '.gitignore' 
-        fi
-        
-        git status -s | 
-        grep '??'|
-        awk '{print $2}' >>  '.gitignore'
-        
-        git commit -a -m 'automatically added untracked files to .gitignore'
-
-        [[ "$1" == 'local' ]] || cd -
-    fi
-}
-
-function fast_push(){
-    if git status -s &> /dev/null; then
-        if [[ $(git remote show) ]] ; then
-            msg=${1:-"commit $(_compact_date_)"}
-            git commit -a -m "$msg"
-            git push
-        else
-            echo 'no remote available'
-        fi
-    else
-        echo 'this is not a git repository'
-    fi
-}
-
-
 
 function same_file(){
     
