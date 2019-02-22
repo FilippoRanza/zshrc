@@ -123,6 +123,8 @@ alias egrep='egrep --color=auto'
 export PATH=$PATH":/usr/scripts"
 
 
+alias R='R --no-save'
+
 #this function counts the number of files inside a directory,it ignores hidden files ans directories
 gfc(){
 	out=$(ls -l | grep -v ^d | wc -l)
