@@ -109,7 +109,11 @@ off(){
 
 #add common aliases
 #color ls output
-alias ls='ls --color=auto'
+if which lsd &> /dev/null ; then
+	alias ls='lsd'
+else
+	alias ls='ls --color=auto'
+fi
 
 #ll rapid alias for ls -alF(remember ls = ls --color=auto)
 alias ll='ls -alF'
@@ -224,15 +228,15 @@ _SATISFIED_DEPENCENCY_=''
 
 function _sha512_(){
     sha512sum "$1" |
-    awk '{print $1}'   
-} 
+    awk '{print $1}'
+}
 
 function auto_type(){
   MSG=${1:-''}
   TIMES=${2:-'10'}
   DELAY=${3:-'10'}
   TYPE_DELAY=${4:-''}
-  
+
   [[ -z "$MSG" ]] && return 1
 
   sleep "$DELAY"
@@ -246,11 +250,11 @@ function auto_type(){
 
 }
 function _compact_date_(){
-    date '+%Y-%m-%d %H:%M'    
+    date '+%Y-%m-%d %H:%M'
 }
 
 function same_file(){
-    
+
     if [[ -z "$1" ]]; then
         echo "$0 expected 2 parameters, got 0"
         return 2
@@ -276,7 +280,7 @@ function same_file(){
 
 function reset_bluetooth(){
     [[ -z "$_SATISFIED_DEPENCENCY_" ]] || { echo 'dependencies not satisfied' ; return}
-    
+
     sudo systemctl restart bluetooth.service
     sudo -k
 }
@@ -294,7 +298,7 @@ function _exist_program(){
     else
         _say_ "$1... NOT Installed"
         _SATISFIED_DEPENCENCY_='FALSE'
-        
+
     fi
     return "$OUT"
 }
@@ -312,23 +316,23 @@ function _exist_service(){
     return "$OUT"
 }
 
-# check that every program needed 
+# check that every program needed
 # by reset_* functions is available
 function reset_check(){
-    
+
     _say_ 'Checking for needed programs by reset_* functions'
     for prg in 'iw' 'ip' 'sudo'; do
         _exist_program "$prg"
     done
 
-    
+
     if _exist_program 'systemctl' ; then
         _say_ 'Check for needed systemctl services by reset_* functions'
         for srv in 'bluetooth.service'; do
             _exist_service "$srv"
         done
     fi
-        
+
 }
 
 # check dependencies on startup
@@ -338,19 +342,19 @@ _ENABLE_SAY_='true'
 
 
 function _check_kernel_release_(){
-    # find the last kernel between the 
+    # find the last kernel between the
     # installed ones, return fail if
     # the last installed version is the
     # one in use, return success otherwise
-    
-    CURR_VERSION=''    
+
+    CURR_VERSION=''
     for k in /boot/vmlinuz* ;  do
         K_VER=$(file "$k" | perl  -lne '/.+\s+version\s+([^\s]+)/; print $1')
         if [[ "$CURR_VERSION"  < "$K_VER" ]] ; then
             CURR_VERSION="$K_VER"
         fi
     done
-    
+
     [[ "$CURR_VERSION"  !=  $(uname -r) ]]
 }
 
@@ -361,12 +365,12 @@ function _clear_user_cache_(){
     else
         HOME_DIR="$HOME"
     fi
-        
+
     CACHE="$HOME_DIR/.cache"
     if [[ -e "$CACHE"  ]]; then
         echo "Clear user cache($CACHE)? [Y/n]"
         read ans
-        case "$ans" in 
+        case "$ans" in
              'n'|'N')
              ;;
              *)
@@ -374,7 +378,7 @@ function _clear_user_cache_(){
              ;;
         esac
     fi
-    
+
 }
 
 
@@ -401,18 +405,18 @@ function check_reboot_need(){
 }
 
 # create the package manager wrapper only
-# is this script is sourced by an interactive 
+# is this script is sourced by an interactive
 # shell
 if [[ "$-"  == *i* ]] ; then
     for i in 'apt' 'yaourt' ; do
 
         if which "$i" &> /dev/null ; then
-        
+
             # define a package manager wrapper
             # that runs the package manager and
             # then checks if a reboot is needed
             # if so it allows the user to reboot
-            # immediately, to schedule the 
+            # immediately, to schedule the
             # reboot in the future or never reboot
             # automatically
             _PACKAGE_MANAGER_PROGRAM_="$i"
@@ -420,8 +424,8 @@ if [[ "$-"  == *i* ]] ; then
                 "$_PACKAGE_MANAGER_PROGRAM_" "$@"
                 check_reboot_need
             }
-            
-            case "$i" in 
+
+            case "$i" in
                 'apt*')
                     _PACKAGE_MANAGER_SEARCH_COMMAND_='search'
                     ;;
@@ -429,16 +433,12 @@ if [[ "$-"  == *i* ]] ; then
                     _PACKAGE_MANAGER_SEARCH_COMMAND_='-Ss'
                     ;;
             esac
-    
+
             alias "$_PACKAGE_MANAGER_PROGRAM_"='_package_manager_wrapper_'
-            
+
             break
         fi
 
     done
 
 fi
-
-
-
-
