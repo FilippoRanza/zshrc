@@ -84,18 +84,29 @@ function print_error(){
 }
 
 
-# change last string so the user knows if it is root or not
-if [[ $U_ID -eq  $R_ID ]] ; then
-	_prompt_='#'
-else
-	_prompt_='->'
-fi
+if [[ -e '/usr/share/zsh-theme-powerlevel9k/powerlevel9k.zsh-theme' ]]; then
+	POWERLEVEL9K_MODE='nerdfont-complete'
 
-# change prompt if the user is logged into a remote shell
-if [[ "$SSH_CLIENT" ]] ; then
-	_host_="$(hostname) "
+	source '/usr/share/zsh-theme-powerlevel9k/powerlevel9k.zsh-theme'
+	POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(battery dir vcs)
+	POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status background_jobs)
+	POWERLEVEL9K_PROMPT_ON_NEWLINE=true
+	POWERLEVEL9K_MULTILINE_FIRST_PROMPT_PREFIX="↱"
+	POWERLEVEL9K_MULTILINE_LAST_PROMPT_PREFIX="↳ "	
 else
-	_host_=''
+	# change last string so the user knows if it is root or not
+	if [[ $U_ID -eq  $R_ID ]] ; then
+		_prompt_='#'
+	else
+		_prompt_='->'
+	fi
+
+	# change prompt if the user is logged into a remote shell
+	if [[ "$SSH_CLIENT" ]] ; then
+		_host_="$(hostname) "
+	else
+		_host_=''
+	fi
 fi
 
 PROMPT="%{$fg_bold[magenta]%}[$_host_%~]%{$fg_bold[yellow]%}$_prompt_%{$reset_color%} "
