@@ -85,12 +85,24 @@ function print_error(){
 
 
 if [[ -e '/usr/share/zsh-theme-powerlevel9k/powerlevel9k.zsh-theme' ]]; then
+
+	zsh_wifi_signal(){
+	    local net=$(iwgetid | perl -ne '/.+"(.+)"/; print $1' )
+	    local color='%F{yellow}'
+		if [[ -z "$net" ]]; then
+			color='%B{red}'
+			net='None'
+		fi
+	    echo -n "%{$color%} \uf230 $net %{%f%}\n"
+	}
+	POWERLEVEL9K_CUSTOM_WIFI_SIGNAL="zsh_wifi_signal"
+
 	POWERLEVEL9K_MODE='nerdfont-complete'
 
 	source '/usr/share/zsh-theme-powerlevel9k/powerlevel9k.zsh-theme'
 	# install segments226
 	POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs dir_writable)
-	POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status battery background_jobs)
+	POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status battery  background_jobs)
 
 
 	# customize prompt
@@ -107,7 +119,7 @@ if [[ -e '/usr/share/zsh-theme-powerlevel9k/powerlevel9k.zsh-theme' ]]; then
 
 	# battery
 	POWERLEVEL9K_BATTERY_CHARGING_BACKGROUND='202'
-	POWERLEVEL9K_BATTERY_CHARGED_BACKGROUND='040'
+	POWERLEVEL9K_BATTERY_CHARGED_BACKGROUND='046'
 	POWERLEVEL9K_BATTERY_LOW_BACKGROUND='001'
 	POWERLEVEL9K_BATTERY_CHARGING_FOREGROUND='black'
 	POWERLEVEL9K_BATTERY_CHARGED_FOREGROUND='black'
@@ -120,6 +132,9 @@ if [[ -e '/usr/share/zsh-theme-powerlevel9k/powerlevel9k.zsh-theme' ]]; then
 	POWERLEVEL9K_VCS_UNTRACKED_FOREGROUND='black'
 	POWERLEVEL9K_VCS_MODIFIED_BACKGROUND='154'
 	POWERLEVEL9K_VCS_MODIFIED_FOREGROUND='black'
+
+
+
 
 
 else
