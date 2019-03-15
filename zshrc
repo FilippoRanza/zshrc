@@ -88,10 +88,12 @@ if [[ -e '/usr/share/zsh-theme-powerlevel9k/powerlevel9k.zsh-theme' ]]; then
 
 	zsh_wifi_signal(){
 	    local net=$(iwgetid | perl -ne '/.+"(.+)"/; print $1' )
-	    echo -n "\uf230 $net\n"
+		if [[ $net ]] ; then
+			echo -n "$net"
+		fi
 	}
 
-	POWERLEVEL9K_CUSTOM_WIFI_SIGNAL_BACKGROUND='yellow'
+	POWERLEVEL9K_CUSTOM_WIFI_SIGNAL_BACKGROUND='118'
 	POWERLEVEL9K_CUSTOM_WIFI_SIGNAL_FOREGROUND='black'
 	POWERLEVEL9K_CUSTOM_WIFI_SIGNAL="zsh_wifi_signal"
 
