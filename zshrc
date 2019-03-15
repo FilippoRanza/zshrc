@@ -133,10 +133,6 @@ if [[ -e '/usr/share/zsh-theme-powerlevel9k/powerlevel9k.zsh-theme' ]]; then
 	POWERLEVEL9K_VCS_MODIFIED_BACKGROUND='154'
 	POWERLEVEL9K_VCS_MODIFIED_FOREGROUND='black'
 
-
-
-
-
 else
 	# change last string so the user knows if it is root or not
 	if [[ $U_ID -eq  $R_ID ]] ; then
