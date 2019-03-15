@@ -88,21 +88,19 @@ if [[ -e '/usr/share/zsh-theme-powerlevel9k/powerlevel9k.zsh-theme' ]]; then
 
 	zsh_wifi_signal(){
 	    local net=$(iwgetid | perl -ne '/.+"(.+)"/; print $1' )
-	    local color='%F{yellow}'
-		if [[ -z "$net" ]]; then
-			color='%B{red}'
-			net='None'
-		fi
-	    echo -n "%{$color%} \uf230 $net %{%f%}\n"
+	    echo -n "\uf230 $net\n"
 	}
+
+	POWERLEVEL9K_CUSTOM_WIFI_SIGNAL_BACKGROUND='yellow'
+	POWERLEVEL9K_CUSTOM_WIFI_SIGNAL_FOREGROUND='black'
 	POWERLEVEL9K_CUSTOM_WIFI_SIGNAL="zsh_wifi_signal"
 
 	POWERLEVEL9K_MODE='nerdfont-complete'
 
 	source '/usr/share/zsh-theme-powerlevel9k/powerlevel9k.zsh-theme'
-	# install segments226
+	# install segments
 	POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs dir_writable)
-	POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status battery  background_jobs)
+	POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status custom_wifi_signal  background_jobs)
 
 
 	# customize prompt
