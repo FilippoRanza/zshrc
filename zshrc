@@ -175,6 +175,9 @@ alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 
 #add /usr/scripts to executable dirs in PATH variable
+if which composer &> /dev/null ; then
+	PATH="$PATH:$HOME/.config/composer/vendor/bin"
+fi
 export PATH=$PATH":/usr/scripts"
 
 
