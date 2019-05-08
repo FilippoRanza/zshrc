@@ -501,3 +501,17 @@ if [[ "$-"  == *i* ]] ; then
     done
 
 fi
+
+
+function download(){
+    local url=$(xclip -o 2> /dev/null | perl -pe 's/^\s+|\s+$//g' || exit)
+    if [[ "$url" ]] ; then
+        if wget -q "$url" &> /dev/null ; then
+            echo -e "$0: done \U1f600"
+        else
+            echo -e "$0 : error : can't download '$url' \U1f621"
+        fi
+    fi
+}
+
+
