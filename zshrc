@@ -175,13 +175,13 @@ alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 
 #add some custom program direcories to the path
-if which composer &> /dev/null ; then
-	PATH="$PATH:$HOME/.config/composer/vendor/bin"
-fi
-
-if [[ -d '/usr/scripts' ]]; then
-	PATH="$PATH:/usr/scripts"
-fi
+local custom_path=("$HOME/.config/composer/vendor/bin" "/usr/scripts")
+for p in "${custom_path[@]}"; do 
+    if [[ -d "$p" ]] ; then
+        PATH="$PATH:$p"
+    fi
+done
+unset custom_path
 
 export PATH
 
